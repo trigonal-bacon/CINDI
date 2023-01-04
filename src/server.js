@@ -6,11 +6,6 @@ import bodyParser from "body-parser";
 import { existsSync, readFileSync } from "fs";
 const app = express();
 app.use(bodyParser.text());
-app.use(
-  cors({
-    origin: "https://cindi.glitch.me",
-  })
-);
 app.post("/", (req, res) => {
   const args = req.body.split(" ");
   const m = args[0] | 0,
@@ -19,7 +14,7 @@ app.post("/", (req, res) => {
   res.send(requestDate(m, d, y));
 });
 app.get("/", (_, res) => {
-  const file = "client/index.html";
+  const file = "client/CINDI.html";
   res.setHeader("Content-Type", `text/html; charset=utf-8`);
   if (file && existsSync(file)) {
     res.writeHead(200);
@@ -28,7 +23,7 @@ app.get("/", (_, res) => {
   res.writeHead(404);
 })
 app.get("/index.js", (_, res) => {
-  const file = "client/index.js";
+  const file = "client/base.js";
   res.setHeader("Content-Type", `application/javascript; charset=utf-8`);
   if (file && existsSync(file)) {
     res.writeHead(200);

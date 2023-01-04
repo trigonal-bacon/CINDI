@@ -1,7 +1,5 @@
 import { execSync } from "child_process";
 import { readFileSync, writeFileSync } from "fs";
-import { execSync } from "child_process";
-import { readFileSync, writeFileSync } from "fs";
 export const requestDate = (m, d, y) => {
     /*
     input conversion and sanitization
@@ -16,9 +14,9 @@ export const requestDate = (m, d, y) => {
     } else if (y === 2006 && m === 6 && d < 13) d = 13;
     const usingV4_10 = y < 2020 || (y === 2020 && m < 7);
 
-    y = (y | 0).toString().padStart(2, "0");
+    y = (y | 0).toString().padStart(4, "0");
     m = (m | 0).toString().padStart(2, "0");
-    d = (d | 0).toString().padStart(4, "0");
+    d = (d | 0).toString().padStart(2, "0");
     /*
     older versions of calipso use a different format for urls
     */
@@ -81,7 +79,6 @@ export const requestDate = (m, d, y) => {
                 matchingOrbitTimes = matchingOrbitTimes
                     .filter((_, index) => !(index & 3))
                     .map((str) => str.split("orbit_time=")[1].split("&page")[0]);
-                //console.log(matchingOrbitTimes);
                 writeFileSync(
                     fileName,
                     new TextEncoder().encode(matchingOrbitTimes.toString())
