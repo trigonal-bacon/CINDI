@@ -28,6 +28,8 @@ export const requestDate = (m, d, y) => {
     */
     const openFile = (name) => {
         try {
+            console.log(name)
+            console.log(readFileSync(name))
             const file = readFileSync(name);
             return Buffer.from(file).toString();
         } catch (err) {
@@ -75,6 +77,11 @@ export const requestDate = (m, d, y) => {
             ? /show_v4_detail.php\?s=production&v=V4-10&browse_date=\d{4}-\d{2}-\d{2}&orbit_time=(\d{2}-\d{2}-\d{2})&page.+hdf/g
             : /show_v411_detail\.php\?s=production&v=V4-11&browse_date=\d{4}-\d{2}-\d{2}&orbit_time=(\d{2}-\d{2}-\d{2})&page.+hdf/g;
             let matchingOrbitTimes = file.match(match);
+            try {
+                execSync(`rm ${fileName}`);
+            } catch(err) {
+                console.log(err);
+            }
             if (matchingOrbitTimes !== null) {
                 matchingOrbitTimes = matchingOrbitTimes
                     .filter((_, index) => !(index & 3))
