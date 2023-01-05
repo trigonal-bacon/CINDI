@@ -28,8 +28,6 @@ export const requestDate = (m, d, y) => {
     */
     const openFile = (name) => {
         try {
-            console.log(name)
-            console.log(readFileSync(name))
             const file = readFileSync(name);
             return Buffer.from(file).toString();
         } catch (err) {
@@ -41,15 +39,16 @@ export const requestDate = (m, d, y) => {
     if (file) {
         let matchingOrbitTimes = file.split(',');
         if (matchingOrbitTimes !== null) {
+            matchingOrbitTimes = matchingOrbitTimes.map(val => [val,val,val,val]).flat()
             if (usingV4_10)
                 matchingOrbitTimes = matchingOrbitTimes.map(
-                    (time) =>
-                    `https://www-calipso.larc.nasa.gov/data/BROWSE/production/V4-10/${y}-${m}-${d}/${y}-${m}-${d}_${time}_V4.10_1_1.png`
+                    (time, index) =>
+                    `https://www-calipso.larc.nasa.gov/data/BROWSE/production/V4-10/${y}-${m}-${d}/${y}-${m}-${d}_${time}_V4.10_${(index & 3) + 1}_1.png`
                 );
             else
                 matchingOrbitTimes = matchingOrbitTimes.map(
-                    (time) =>
-                    `https://www-calipso.larc.nasa.gov/data/BROWSE/production/V4-11/${y}-${m}-${d}/${y}-${m}-${d}_${time}_V4.11_1_1.png`
+                    (time, index) =>
+                    `https://www-calipso.larc.nasa.gov/data/BROWSE/production/V4-11/${y}-${m}-${d}/${y}-${m}-${d}_${time}_V4.11_${(index & 3) + 1}_1.png`
                 );
             return matchingOrbitTimes;
         } else {
@@ -84,7 +83,6 @@ export const requestDate = (m, d, y) => {
             }
             if (matchingOrbitTimes !== null) {
                 matchingOrbitTimes = matchingOrbitTimes
-                    .filter((_, index) => !(index & 3))
                     .map((str) => str.split("orbit_time=")[1].split("&page")[0]);
                 writeFileSync(
                     fileName,
@@ -92,13 +90,13 @@ export const requestDate = (m, d, y) => {
                 );
                 if (usingV4_10)
                     matchingOrbitTimes = matchingOrbitTimes.map(
-                        (time) =>
-                        `https://www-calipso.larc.nasa.gov/data/BROWSE/production/V4-10/${y}-${m}-${d}/${y}-${m}-${d}_${time}_V4.10_1_1.png`
+                        (time, index) =>
+                        `https://www-calipso.larc.nasa.gov/data/BROWSE/production/V4-10/${y}-${m}-${d}/${y}-${m}-${d}_${time}_V4.10_${(index & 3) + 1}_1.png`
                     );
                 else
                     matchingOrbitTimes = matchingOrbitTimes.map(
-                        (time) =>
-                        `https://www-calipso.larc.nasa.gov/data/BROWSE/production/V4-11/${y}-${m}-${d}/${y}-${m}-${d}_${time}_V4.11_1_1.png`
+                        (time, index) =>
+                        `https://www-calipso.larc.nasa.gov/data/BROWSE/production/V4-11/${y}-${m}-${d}/${y}-${m}-${d}_${time}_V4.11_${(index & 3) + 1}_1.png`
                     );
                 return matchingOrbitTimes;
             } else {

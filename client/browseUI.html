@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
     <title>CINDI</title>
-    <link href="style.css" rel="stylesheet" type="text/css"/>
+    <link href="style.css" rel="stylesheet" type="text/css" />
   </head>
 
   <body>
@@ -19,14 +19,21 @@
         </ul>
       </nav>
     </header>
-    <div>
-      <h1>
-        Hello, this is a website
-      </h1>
-      <p>
-        This is text on the website<br>
-        This is more text
-      </p>
+    <div id="browse-div">
+      <div id="input-div">
+          enter the thing<br><br>
+          <input type="text" id="input" size=10 value=""></input>
+          <br>
+          <br>
+          <button class="choose" id="choose">BROWSE PICTURES</button>
+          <br>
+      </div>
+      <div id="image-shower">
+        <button id="prev">prev</button>
+        <image id="showing-image"></image>
+        <button id="next">next</button>
+      </div>
     </div>
+    <script src="browser.js"></script>
   </body>
 </html>

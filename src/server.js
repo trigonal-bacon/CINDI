@@ -25,8 +25,10 @@ class Server {
   }
 }
 const CINDIServer = new Server()
-.addGetReq("/","client/CINDI.html","text/html")
-.addGetReq("/base.js","client/base.js","application/javascript")
+.addGetReq("/","canvas-client/CINDI.html","text/html")
+.addGetReq("/about.html","client/about.html","text/html")
+.addGetReq("/browseUI.html","client/browseUI.html","text/html")
+.addGetReq("/CINDI.js","canvas-client/CINDI.js","application/javascript")
 .addGetReq("/style.css","client/style.css","text/css")
 .addPostReq("/", (req, res) => {
   const args = req.body.split(" ");
@@ -36,4 +38,4 @@ const CINDIServer = new Server()
   res.send(requestDate(m, d, y));
 });
 const server = createServer(CINDIServer.app);
-server.listen(8080);
+server.listen(3000);
