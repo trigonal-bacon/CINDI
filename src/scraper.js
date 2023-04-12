@@ -1,5 +1,6 @@
 import { execSync } from "child_process";
 import { readFileSync, writeFileSync } from "fs";
+import imageToBase64 from "image-to-base64";
 export const requestDate = (m, d, y) => {
     /*
     input conversion and sanitization
@@ -105,4 +106,7 @@ export const requestDate = (m, d, y) => {
         }
     }
     return "ERR:OTHER";
-};
+}
+export const convertTo64 = async url => {
+    return await imageToBase64(url);
+}

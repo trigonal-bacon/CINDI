@@ -1,4 +1,4 @@
-import { requestDate } from "./scraper.js";
+import { requestDate, convertTo64 } from "./scraper.js";
 import express from "express";
 import { createServer } from "http";
 import bodyParser from "body-parser";
@@ -36,6 +36,17 @@ const CINDIServer = new Server()
     d = args[1] | 0,
     y = args[2] | 0;
   res.send(requestDate(m, d, y));
+}).addPostReq("/to-64", async (req, res) => {
+  const url = req.body;
+  try {
+    //console.log(url);
+    const resp = await convertTo64(url);
+    //console.log(resp);
+    res.send(resp);
+  } catch(err) {
+    console.log("error in converting to b64");
+  }
 });
 const server = createServer(CINDIServer.app);
 server.listen(3000);
+console.log("started");
