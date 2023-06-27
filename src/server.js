@@ -3,10 +3,12 @@ import express from "express";
 import { createServer } from "http";
 import bodyParser from "body-parser";
 import { existsSync, readFileSync } from "fs";
+import cors from "cors";
 class Server {
   constructor() {
     this.app = express();
     this.app.use(bodyParser.text());
+    this.app.use(cors());
   }
   addGetReq(path, file, type) {
     this.app.get(path, (_, res) => {
@@ -25,7 +27,7 @@ class Server {
   }
 }
 const CINDIServer = new Server()
-.addGetReq("/","canvas-client/CINDI.html","text/html")
+.addGetReq("/","canvas-client/index.html","text/html")
 .addGetReq("/about.html","client/about.html","text/html")
 .addGetReq("/browseUI.html","client/browseUI.html","text/html")
 .addGetReq("/CINDI.js","canvas-client/CINDI.js","application/javascript")
@@ -38,15 +40,17 @@ const CINDIServer = new Server()
   res.send(requestDate(m, d, y));
 }).addPostReq("/to-64", async (req, res) => {
   const url = req.body;
+  console.log(url);
   try {
-    //console.log(url);
     const resp = await convertTo64(url);
-    //console.log(resp);
+    console.log("----------------------------------------------");
     res.send(resp);
   } catch(err) {
+    console.log(url, "failed\n");
     console.log("error in converting to b64");
   }
 });
 const server = createServer(CINDIServer.app);
-server.listen(3000);
+server.listen(8081);
+
 console.log("started");

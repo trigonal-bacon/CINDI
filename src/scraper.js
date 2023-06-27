@@ -22,12 +22,14 @@ export const requestDate = (m, d, y) => {
     older versions of calipso use a different format for urls
     */
     const fileName = usingV4_10
-    ? `std_v4_showdate.php?browse_date=${y}-${m}-${d}`
-    : `std_v411_showdate.php?browse_date=${y}-${m}-${d}`;
+    ? `std_v4_showdate.php\?browse_date=${y}-${m}-${d}`
+    : `std_v411_showdate.php\?browse_date=${y}-${m}-${d}`;
     /*
     if file exists, no need to wget again
     */
     const openFile = (name) => {
+        const USING_WINDOWS = true; //if using windows
+        if (USING_WINDOWS) name = name.replaceAll("?", "@");
         try {
             const file = readFileSync(name);
             return Buffer.from(file).toString();
@@ -78,7 +80,7 @@ export const requestDate = (m, d, y) => {
             : /show_v411_detail\.php\?s=production&v=V4-11&browse_date=\d{4}-\d{2}-\d{2}&orbit_time=(\d{2}-\d{2}-\d{2})&page.+hdf/g;
             let matchingOrbitTimes = file.match(match);
             try {
-                execSync(`rm ${fileName}`);
+                execSync(`rm ${fileName.replaceAll("?", "@")}`);
             } catch(err) {
                 console.log(err);
             }
@@ -86,8 +88,8 @@ export const requestDate = (m, d, y) => {
                 matchingOrbitTimes = matchingOrbitTimes
                     .map((str) => str.split("orbit_time=")[1].split("&page")[0]);
                 writeFileSync(
-                    fileName,
-                    new TextEncoder().encode(matchingOrbitTimes.toString())
+                    fileName.replaceAll("?", "@"),
+                    new TextEncoder().encode(matchingOrbitTimes.filter((_,i)=>i%4==0).toString())
                 );
                 if (usingV4_10)
                     matchingOrbitTimes = matchingOrbitTimes.map(
