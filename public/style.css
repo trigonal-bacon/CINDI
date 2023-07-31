@@ -1,0 +1,122 @@
+body {
+  margin: 0; /* Remove body margin */
+  padding: 0; /* Remove body padding */
+  overflow: hidden;
+}
+
+.navbar {
+  background-color: #333;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 60px;
+  width: 100%;
+  padding: 0; /* Remove padding */
+}
+.navbar a {
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 6px; /* Rounded by 1/10 of the height */
+  line-height: calc(60px - 12px); /* Adjusted line-height for vertical centering */
+  padding: 0 12px; /* Horizontal padding for button content */
+  transition: background-color 0.3s ease; /* Transition effect for hover */
+}
+
+.navbar a:hover {
+  background-color: #ddd;
+  color: #333;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  box-sizing: border-box;
+  padding: 0;
+  margin-bottom: 0;
+  background-color: #333333;
+  height: calc(100vh - 60px);
+}
+
+.date-input {
+  display: flex;
+  flex-direction: row;
+  box-sizing: border-box;
+  padding: 0;
+  margin-bottom: 0;
+  width: calc(132px - 12px);
+  height: calc(48px - 12px);
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  flex-shrink: 0; /* Prevent sidebar from shrinking */
+  overflow-y: scroll;
+}
+
+.sidebar input {
+  margin-bottom: 10px;
+  text-align: left;
+  text-decoration: none;
+  border-radius: 6px; /* Rounded by 1/10 of the height */
+  line-height: calc(24px - 12px); /* Adjusted line-height for vertical centering */
+  height: 24px;
+  width: calc(84px - 12px);
+  padding: 0 6px; /* Horizontal padding for button content */ 
+  white-space: nowrap;
+  background-color: #b3e4d2;
+  transition: background-color 0.1s ease;
+}
+
+.sidebar button {
+  margin-bottom: 10px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 6px; /* Rounded by 1/10 of the height */
+  line-height: calc(42px - 12px); /* Adjusted line-height for vertical centering */
+  width: calc(132px - 12px);
+  padding: 0 6px; /* Horizontal padding for button content */ 
+  white-space: nowrap;
+  background-color: #4381c3;
+  transition: background-color 0.1s ease;
+}
+
+.sidebar button:hover {
+  background-color: #5fa1b3;
+}
+
+.sidebar p {
+  color: #ccc;
+  line-height: 12px;
+  padding: 0;
+}
+
+.row {
+  width: 132px;
+}
+
+.row button {
+  width: calc(72px - 12px);
+}
+
+.date-input button {
+  margin-bottom: 0px;
+  text-align: left;
+  text-decoration: none;
+  border-radius: 6px; /* Rounded by 1/10 of the height */
+  line-height: calc(24px - 12px); /* Adjusted line-height for vertical centering */
+  height: 30px;
+  padding: 0 12px; /* Horizontal padding for button content */ 
+  white-space: nowrap;
+  background-color: #777777;
+  transition: background-color 0.1s ease;
+}
+
+canvas {
+  background-color: #fff;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+}

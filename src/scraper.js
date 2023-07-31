@@ -38,26 +38,9 @@ export const requestDate = (m, d, y) => {
             return false;
         }
     };
-    const file = openFile(fileName);
-    if (file) {
-        let matchingOrbitTimes = file.split(',');
-        if (matchingOrbitTimes !== null) {
-            matchingOrbitTimes = matchingOrbitTimes.map(val => [val,val,val,val]).flat()
-            if (usingV4_10)
-                matchingOrbitTimes = matchingOrbitTimes.map(
-                    (time, index) =>
-                    `https://www-calipso.larc.nasa.gov/data/BROWSE/production/V4-10/${y}-${m}-${d}/${y}-${m}-${d}_${time}_V4.10_${(index & 3) + 1}_1.png`
-                );
-            else
-                matchingOrbitTimes = matchingOrbitTimes.map(
-                    (time, index) =>
-                    `https://www-calipso.larc.nasa.gov/data/BROWSE/production/V4-11/${y}-${m}-${d}/${y}-${m}-${d}_${time}_V4.11_${(index & 3) + 1}_1.png`
-                );
-            return matchingOrbitTimes;
-        } else {
-            return "ERR:SERVER_HANDLING_EXCEPTION";
-        }
-    }
+    const file = openFile(`${y}-${m}-${d}`);
+    if (file) 
+       return file;
     /*
     try 2 times to access file
     */
@@ -86,21 +69,11 @@ export const requestDate = (m, d, y) => {
             }
             if (matchingOrbitTimes !== null) {
                 matchingOrbitTimes = matchingOrbitTimes
-                    .map((str) => str.split("orbit_time=")[1].split("&page")[0]);
+                    .map((str) => str.split("orbit_time=")[1].split("&page")[0]).filter((_,i)=>i%4===0).toString();
                 writeFileSync(
-                    fileName.replaceAll("?", "@"),
-                    new TextEncoder().encode(matchingOrbitTimes.filter((_,i)=>i%4==0).toString())
+                    `${y}-${m}-${d}`,
+                    new TextEncoder().encode(matchingOrbitTimes)
                 );
-                if (usingV4_10)
-                    matchingOrbitTimes = matchingOrbitTimes.map(
-                        (time, index) =>
-                        `https://www-calipso.larc.nasa.gov/data/BROWSE/production/V4-10/${y}-${m}-${d}/${y}-${m}-${d}_${time}_V4.10_${(index & 3) + 1}_1.png`
-                    );
-                else
-                    matchingOrbitTimes = matchingOrbitTimes.map(
-                        (time, index) =>
-                        `https://www-calipso.larc.nasa.gov/data/BROWSE/production/V4-11/${y}-${m}-${d}/${y}-${m}-${d}_${time}_V4.11_${(index & 3) + 1}_1.png`
-                    );
                 return matchingOrbitTimes;
             } else {
                 return "ERR:NO_MATCH";

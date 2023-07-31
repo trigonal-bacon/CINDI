@@ -1,4 +1,5 @@
 import { requestDate, convertTo64 } from "./scraper.js";
+import { cindi_score } from "./scorer.js";
 import express from "express";
 import { createServer } from "http";
 import bodyParser from "body-parser";
@@ -27,27 +28,32 @@ class Server {
   }
 }
 const CINDIServer = new Server()
-.addGetReq("/","canvas-client/index.html","text/html")
-.addGetReq("/about.html","client/about.html","text/html")
-.addGetReq("/browseUI.html","client/browseUI.html","text/html")
-.addGetReq("/CINDI.js","canvas-client/CINDI.js","application/javascript")
-.addGetReq("/style.css","client/style.css","text/css")
 .addPostReq("/", (req, res) => {
   const args = req.body.split(" ");
   const m = args[0] | 0,
     d = args[1] | 0,
     y = args[2] | 0;
-  res.send(requestDate(m, d, y));
+    const b = requestDate(m, d, y);
+  res.send(b);
 }).addPostReq("/to-64", async (req, res) => {
   const url = req.body;
   console.log(url);
   try {
     const resp = await convertTo64(url);
     console.log("----------------------------------------------");
+    //console.log(resp);
     res.send(resp);
   } catch(err) {
     console.log(url, "failed\n");
     console.log("error in converting to b64");
+  }
+}).addPostReq("/score", async (req, res) => {
+  try {
+    const { path, date, url, pos } = JSON.parse(req.body);
+    res.send(await cindi_score(path, date, url, pos));
+  }
+  catch(e) {
+    res.send("bad req");
   }
 });
 const server = createServer(CINDIServer.app);

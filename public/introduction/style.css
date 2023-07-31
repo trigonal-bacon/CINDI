@@ -1,0 +1,37 @@
+body {
+    margin: 0; /* Remove body margin */
+    padding: 0; /* Remove body padding */
+    overflow: scroll;
+    overflow-x: hidden;
+    background-color: #999;
+}
+
+.navbar {
+    background-color: #333;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 60px;
+    width: 100%;
+    padding: 0; /* Remove padding */
+}
+.navbar a {
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 6px; /* Rounded by 1/10 of the height */
+    line-height: calc(60px - 12px); /* Adjusted line-height for vertical centering */
+    padding: 0 12px; /* Horizontal padding for button content */
+    transition: background-color 0.3s ease; /* Transition effect for hover */
+}
+
+.navbar a:hover {
+    background-color: #ddd;
+    color: #333;
+}
+
+.paragraph {
+    padding-left: 10px;
+}
+  
+  

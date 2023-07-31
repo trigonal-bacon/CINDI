@@ -1,0 +1,72 @@
+import Jimp from "jimp";
+import { score_path } from "./boundary_convolve.js";
+
+const TROPOPAUSE_RANGE = 50;
+export const cindi_score = async (paths, date, url, pos) => {
+    console.log(s)
+    let [m, d, y] = date.split(" ").map(_=>parseInt(_));
+    const usingV4_10 = y < 2020 || (y === 2020 && m < 7);
+    y = (y | 0).toString().padStart(4, "0");
+    m = (m | 0).toString().padStart(2, "0");
+    d = (d | 0).toString().padStart(2, "0");
+    if (pos < 1 || pos > 4)
+        return "error in pos";
+    if (usingV4_10)
+        url = `https://www-calipso.larc.nasa.gov/data/BROWSE/production/V4-10/${y}-${m}-${d}/${y}-${m}-${d}_${url}_V4.10_${pos}`;
+    else
+        url = `https://www-calipso.larc.nasa.gov/data/BROWSE/production/V4-11/${y}-${m}-${d}/${y}-${m}-${d}_${url}_V4.11_${pos}`;
+    let image, overplot, _v1;
+    await Promise.all([Jimp.read(url + "_6.png"), Jimp.read(url + "_1_overplot.png"), Jimp.read(url + "_1.png")]).then(v => {
+        image = v[0];
+        overplot = v[1];
+        _v1 = v[2];
+    });
+    image.crop(82, 61, 1006, 525);
+    overplot.crop(82, 61, 1006, 533);
+    _v1.crop(82, 61, 1006, 533);
+    overplot = new Uint32Array(overplot.bitmap.data.buffer);
+    const y_scale = 525/533;
+    for (const path of paths) {
+        const img = image.clone();
+        const _v1_clone = _v1.clone();
+        let min_x = path[0][0], max_x = min_x, min_y = path[0][1], max_y = min_y;
+        for (let n = 0; n < path.length; ++n) {
+            const [X, Y] = path[n];
+            if (X < min_x)
+                min_x = X;
+            else if (X > max_x)
+                max_x = X;
+            if (Y < min_y)
+                min_y = Y;
+            else if (Y > max_y)
+                max_y = Y;
+            //make the image coordinates match
+            path[n] = [(X + 544) | 0, (Y + 266.5) | 0];
+        }
+        min_x = (min_x + 544) | 0;
+        max_x = (max_x + 544) | 0;
+        min_nonscale_y = (min_y + 266.5) | 0;
+        max_nonscale_y = (max_y + 266.5) | 0;
+        min_y = ((min_y + 266.5) * y_scale) | 0;
+        max_y = ((max_y + 266.5) * y_scale) | 0;
+        for (let point = 0; point < path.length; ++point)
+        {
+            for (let height = 0; height < 533; ++height) {
+                if (overplot[height * 1006 + path[point][0]] === 0xff2f3f37) {
+                    if (height - path[point][1] / y_scale > TROPOPAUSE_RANGE || path[point][1] / y_scale - height > TROPOPAUSE_RANGE) {
+                        console.log("failed tropo test for point ", point);
+                        break;
+                    }
+                }
+            }
+        }
+        _v1_clone.crop(min_x - 2, min_nonscale_y - 2, max_x - min_x + 4, max_nonscale_y - min_nonscale_y + 4);
+        const bmp = new Uint32Array(_v1_clone.bitmap.data.buffer);
+        bmp.width = max_x - min_x + 4;
+        bmp.height = max_nonscale_y - min_nonscale_y + 4;
+        bmp.x = min_x - 2;
+        bmp.y = min_y - 2;
+        const score = score_path(bmp, path);
+    }
+    return "1";
+}
