@@ -5,6 +5,7 @@ import { createServer } from "http";
 import bodyParser from "body-parser";
 import { existsSync, readFileSync } from "fs";
 import cors from "cors";
+
 class Server {
   constructor() {
     this.app = express();
@@ -50,6 +51,7 @@ const CINDIServer = new Server()
 }).addPostReq("/score", async (req, res) => {
   try {
     const { path, date, url, pos } = JSON.parse(req.body);
+    console.log(req.body);
     res.send(await cindi_score(path, date, url, pos));
   }
   catch(e) {

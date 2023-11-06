@@ -91,20 +91,26 @@ curr_elem.onclick = () => {
 }
 
 window.addEventListener("keydown", (e) => {
+  if (!handler.image_loaded)
+    return; 
   if (!e.ctrlKey || e.code !== 'KeyZ')
+  {
+    if (e.key === '=')
+      handler.scale *= 1.25;
+    else if (e.key === '-')
+      handler.scale *= 0.8;
     return;
-  if (handler.image_loaded) {
-    if (handler.curr_path.length) {
-      handler.curr_path.pop();
-      handler.curr_path.closed = false;
-      handler.curr_path.scored = false;
-    }
-    else if (handler.paths.length) {
-      handler.curr_path = handler.paths.pop();
-      handler.curr_path.pop();
-      handler.curr_path.closed = false;
-      handler.curr_path.scored = false;
-    }
+  }
+  if (handler.curr_path.length) {
+    handler.curr_path.pop();
+    handler.curr_path.closed = false;
+    handler.curr_path.scored = false;
+  }
+  else if (handler.paths.length) {
+    handler.curr_path = handler.paths.pop();
+    handler.curr_path.pop();
+    handler.curr_path.closed = false;
+    handler.curr_path.scored = false;
   }
 })
 curr_elem = document.getElementById('reset-all');

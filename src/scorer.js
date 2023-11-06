@@ -1,6 +1,6 @@
 import Jimp from "jimp";
 import { is_in_path } from "./InPath.js";
-import { writeFile, createWriteStream, open } from "fs";
+import { createWriteStream } from "fs";
 
 const SECONDS_PER_PIXEL = 0.7208180147;
 const KILOMETERS_PER_PIXEL = 0.06003752345;
@@ -15,12 +15,11 @@ const color_score = (bmp, x, y) => {
     const red = color & 255;
     const green = (color >> 8) & 255;
     const blue = (color >> 16) & 255;
-    return red * 1 + green * 0.5 + (blue) * 0.2 - 35;
+    return red * 0.9 + green * 0.5 + (blue) * 0.1 - 25;
 }
 
 const TROPOPAUSE_RANGE = 50;
 const score_height = (path, bmp) => {
-    console.log("Scoring Height");
     const width = IMAGE_WIDTH;
     const height = IMAGE_HEIGHT_NORM;
     let failed = 0;
@@ -37,16 +36,13 @@ const score_height = (path, bmp) => {
                 break;
             }
         if (!in_range)
-        {
             ++failed;
-            console.log("Not in range");
-        }
     }
+    //console.log("Height Score: ", Math.min(failed / path.length, 0.5) * 2);
     return Math.min(failed / path.length, 0.5) * 2;
 }
 
 const score_convolution = (path, bmp, fbmp) => {
-    console.log("scoring density")
     let min_x = 10000, min_y = 10000, max_x = 0, max_y = 0;
     let center_x = 0, center_y = 0;
     for (let [x, y] of path) {
@@ -98,7 +94,7 @@ const score_convolution = (path, bmp, fbmp) => {
                 const color2 = fbmp[((y * IMAGE_HEIGHT_2 / IMAGE_HEIGHT_NORM) | 0) * IMAGE_WIDTH + x];
                 if (color2 === 0xffffdc00)
                     overplot_score += 1
-                else if (color2 === 0xffff2600 || color2 === 0xffffffff)
+                else if (color2 === 0xffff2600 || color2 === 0xffffffff || color2 == 0xffe63cc8)
                     overplot_score += 0.75;
             }
             else if (is_in_path(expanded_path, x - IMAGE_WIDTH / 2, y - IMAGE_HEIGHT_NORM / 2)) {
@@ -107,14 +103,10 @@ const score_convolution = (path, bmp, fbmp) => {
             }
         }
     }
-    console.log("Main: ", area_sum / area, area, grey_area);
-    console.log("Boundary: ", boundary_sum / boundary_area, boundary_area);
-    console.log("Overplot: ", overplot_score / area);
-    const ratio = area > 30 ? area_sum / area / (boundary_sum / boundary_area) : 0;
-    const grey_score = Math.max(Math.min(20 * (grey_area / area) - 0.01, 1), 0);
-    console.log("Ratio: ", ratio);
-    console.log("Grey Area Score: ", grey_score);
-    return [Math.max(Math.min((ratio - 1.3) / 0.22, 1), 0), grey_score, overplot_score / area];
+    const ratio = area > 35 ? area_sum / area / (boundary_sum / boundary_area) : 0;
+    const grey_score = Math.max(Math.min(20 * (grey_area / area - 0.001), 1), 0);
+    //console.log("Absolute Intensity Score: ", grey_score);
+    return [Math.max(Math.min((ratio - 1.25) / 0.3, 1), 0), grey_score, overplot_score / area];
 }
 
 const time_add = (t1, t2) => {
@@ -136,7 +128,6 @@ const time_add = (t1, t2) => {
 }
 
 export const cindi_score = async (paths, date, url, pos) => {
-    console.log("scoring");
     let [m, d, y] = date.split(" ").map(_=>parseInt(_));
     const usingV4_10 = y < 2020 || (y === 2020 && m < 7);
     y = (y | 0).toString().padStart(4, "0");
@@ -177,12 +168,11 @@ export const cindi_score = async (paths, date, url, pos) => {
             parts.push([]);
             continue; //don't want to overload the server
         }
-        const h_score = score_height(path, new Uint32Array(overplot.bitmap.data.buffer));
+        const height_score = score_height(path, new Uint32Array(overplot.bitmap.data.buffer));
         const [convolve_score, grey_score, feature_score] = score_convolution(path, new Uint32Array(image_bitmap.bitmap.data.buffer), new Uint32Array(feature_mask.bitmap.data.buffer));
-        parts.push([h_score, feature_score, convolve_score, grey_score]);
-        scores.push(convolve_score * 2/3 + feature_score * 1/3 - h_score * 1/4 - grey_score * 1/3);    
+        parts.push([height_score, feature_score, convolve_score, grey_score]);
+        scores.push(convolve_score * 2/3 + feature_score * 1/3 - height_score * 1/4 - grey_score * 1/2);    
     }
-    console.log(scores, parts);
     //return the array of scores
     const stream = createWriteStream(`scores/${y}-${m}-${d}`,{flags:'a'});
     stream.once("open", (fd) => {
@@ -195,11 +185,10 @@ export const cindi_score = async (paths, date, url, pos) => {
                 const [p_h,p_m,p_s] = time_add(time, [0,0,(x+IMAGE_WIDTH/2)*SECONDS_PER_PIXEL]);
                 y = 30 - (y + IMAGE_HEIGHT_NORM/2)*KILOMETERS_PER_PIXEL;
                 trop_h = 30 - (trop_h + IMAGE_HEIGHT_NORM/2)*KILOMETERS_PER_PIXEL;
-                string += `${p_h|0}-${p_m|0}-${p_s|0},${y},${trop_h},`;
+                string += `${p_h|0}-${p_m|0}-${p_s|0},${y.toFixed(2)},${trop_h.toFixed(2)},`;
             }
             string = string.slice(0,string.length-1);
-            string += `],${scores[n]},${parts[n].toString()}\n`;
-            console.log("writing", string);
+            string += `],${scores[n]},${parts[n].map(x => x.toFixed(2)).toString()},${new Date().toString()}\n`;
             stream.write(string);
         }
         stream.close();

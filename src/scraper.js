@@ -1,6 +1,7 @@
 import { execSync } from "child_process";
 import { readFileSync, writeFileSync } from "fs";
 import imageToBase64 from "image-to-base64";
+
 export const requestDate = (m, d, y) => {
     /*
     input conversion and sanitization
@@ -13,14 +14,16 @@ export const requestDate = (m, d, y) => {
         m = 6;
         d = 13;
     } else if (y === 2006 && m === 6 && d < 13) d = 13;
+
+    /*
+    images have a different base url after July of 2020
+    */
     const usingV4_10 = y < 2020 || (y === 2020 && m < 7);
 
     y = (y | 0).toString().padStart(4, "0");
     m = (m | 0).toString().padStart(2, "0");
     d = (d | 0).toString().padStart(2, "0");
-    /*
-    older versions of calipso use a different format for urls
-    */
+
     const fileName = usingV4_10
     ? `std_v4_showdate.php\?browse_date=${y}-${m}-${d}`
     : `std_v411_showdate.php\?browse_date=${y}-${m}-${d}`;

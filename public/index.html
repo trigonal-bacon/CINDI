@@ -14,24 +14,28 @@
     </div>
     <div class="container" id="container">
       <div class="sidebar" id="sidebar">
-        <p>Select a date...</p>
-        <div class="date-input">
+        <fieldset>
+          <legend>Date selection</legend>
           <input id="date" placeholder="mm/dd/yyyy"></input>
           <button id="enter-date">></button>
-        </div>
-        <p>Choose an image...</p>
-        <div class="row">
-          <button id="prev"><</button>
-          <button id="next">></button>
-        </div>
-        <p>Tools to help...</p>
-        <button id="zoom-in">Zoom In</button>
-        <button id="zoom-out">Zoom Out</button>
-        <button id="zoom-reset">Reset Zoom</button>
-        <button id="undo">Undo</button>
-        <button id="reset-all">Reset All</button>
-        <p>Once you're done...</p>
-        <button id="submit">Submit</button>
+        </fieldset>
+        <fieldset>
+          <legend>Choose an image</legend>
+          <button id="prev">< Prev</button>
+          <button id="next">Next ></button>
+        </fieldset>
+        <fieldset class="grid-fieldset">
+          <legend>Tools to help</legend>
+          <button id="zoom-in">Zoom In</button>
+          <button id="zoom-out">Zoom Out</button>
+          <button id="zoom-reset">Reset Zoom</button>
+          <button id="undo">Undo</button>
+          <button id="reset-all">Reset All</button>
+        </fieldset>
+        <fieldset>
+          <legend>Score paths</legend>
+          <button id="submit">Submit</button>
+        </fieldset>
       </div>
       <canvas id="canvas"></canvas>
     </div>

@@ -4,6 +4,24 @@ body {
   overflow: hidden;
 }
 
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #777;
+  border-radius: 5px;
+  border: 6px solid transparent;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #999;
+}
+
 .navbar {
   background-color: #333;
   display: flex;
@@ -38,22 +56,14 @@ body {
   height: calc(100vh - 60px);
 }
 
-.date-input {
-  display: flex;
-  flex-direction: row;
-  box-sizing: border-box;
-  padding: 0;
-  margin-bottom: 0;
-  width: calc(132px - 12px);
-  height: calc(48px - 12px);
-}
-
 .sidebar {
   display: flex;
   flex-direction: column;
   padding: 10px;
   flex-shrink: 0; /* Prevent sidebar from shrinking */
   overflow-y: scroll;
+  overflow-x: hidden;
+  gap: 10px;
 }
 
 .sidebar input {
@@ -70,20 +80,18 @@ body {
   transition: background-color 0.1s ease;
 }
 
-.sidebar button {
+button {
   margin-bottom: 10px;
   text-align: center;
-  text-decoration: none;
   border-radius: 6px; /* Rounded by 1/10 of the height */
-  line-height: calc(42px - 12px); /* Adjusted line-height for vertical centering */
-  width: calc(132px - 12px);
-  padding: 0 6px; /* Horizontal padding for button content */ 
-  white-space: nowrap;
+  padding: 6px; /* Horizontal padding for button content */ 
+  width: fit-content;
+  height: fit-content;
   background-color: #4381c3;
   transition: background-color 0.1s ease;
 }
 
-.sidebar button:hover {
+button:hover {
   background-color: #5fa1b3;
 }
 
@@ -101,21 +109,36 @@ body {
   width: calc(72px - 12px);
 }
 
-.date-input button {
-  margin-bottom: 0px;
-  text-align: left;
-  text-decoration: none;
-  border-radius: 6px; /* Rounded by 1/10 of the height */
-  line-height: calc(24px - 12px); /* Adjusted line-height for vertical centering */
-  height: 30px;
-  padding: 0 12px; /* Horizontal padding for button content */ 
-  white-space: nowrap;
-  background-color: #777777;
-  transition: background-color 0.1s ease;
+fieldset {
+  min-width: 100px;
+  width: 132px;
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  padding: 2px 5px;
+  justify-content: center;
+}
+
+fieldset legend {
+  color: #ccc;
+}
+
+fieldset button {
+  display: flex;
+  line-height: calc(24px - 12px);
+  justify-content: center;
+}
+
+.grid-fieldset {
+  display: grid;
+}
+
+.grid-fieldset button {
+  width: 100px;
 }
 
 canvas {
-  background-color: #fff;
+  background-color: #999;
   flex: 1;
   width: 100%;
   height: 100%;
