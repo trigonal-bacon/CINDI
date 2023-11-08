@@ -15,7 +15,7 @@ const color_score = (bmp, x, y) => {
     const red = color & 255;
     const green = (color >> 8) & 255;
     const blue = (color >> 16) & 255;
-    return red * 0.9 + green * 0.5 + (blue) * 0.1 - 25;
+    return red * 2.0 + green * 0.8 + (blue) * 0.1 - 35;
 }
 
 const TROPOPAUSE_RANGE = 50;
@@ -24,7 +24,6 @@ const score_height = (path, bmp) => {
     const height = IMAGE_HEIGHT_NORM;
     let failed = 0;
     for (let point of path) {
-        
         const x = (point[0] + IMAGE_WIDTH / 2) | 0;
         const y = (point[1] + IMAGE_HEIGHT_NORM / 2) | 0;
         let in_range = false;
@@ -104,9 +103,9 @@ const score_convolution = (path, bmp, fbmp) => {
         }
     }
     const ratio = area > 35 ? area_sum / area / (boundary_sum / boundary_area) : 0;
-    const grey_score = Math.max(Math.min(20 * (grey_area / area - 0.001), 1), 0);
+    const grey_score = Math.max(Math.min(20 * (grey_area / area), 1), 0);
     //console.log("Absolute Intensity Score: ", grey_score);
-    return [Math.max(Math.min((ratio - 1.25) / 0.3, 1), 0), grey_score, overplot_score / area];
+    return [Math.max(Math.min((ratio - 1.25) / 0.25, 1), 0), grey_score, overplot_score / area];
 }
 
 const time_add = (t1, t2) => {
